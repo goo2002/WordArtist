@@ -1,0 +1,770 @@
+/* 定義 Zpix 字體 */
+@font-face {
+  font-family: "Zpix";
+  /* 為了相容性，保留多種格式，如果只有 ttf 就只留 ttf */
+  src: url("../fonts/zpix.woff2") format("woff2"),
+       url("../fonts/zpix.woff") format("woff"),
+       url("../fonts/zpix.ttf") format("truetype");
+  font-display: swap;
+  unicode-range: U+0000-FFFF;
+}
+
+body {
+  background-color: #333; /* 維持原始背景色 */
+  font-family: "Zpix", "Noto Sans TC", "Microsoft JhengHei", monospace, sans-serif;
+  margin: 0;
+  overflow: hidden; /* 防止視窗捲動 */
+}
+
+/* Beta：集中控制顯示/隱藏（Beta off 時完全不顯示） */
+.beta-only {
+  display: none;
+}
+.beta-enabled .beta-only {
+  display: block;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* 上方功能列 */
+.menu-bar {
+  width: 100%;
+  height: 24px; /* 原始高度 */
+  display: flex;
+  align-items: center;
+  background-color: #666; /* 原始選單色 */
+  color: white;
+  z-index: 100;
+  border-bottom: 1px solid #444; /* 增加一點邊界感 */
+}
+
+.menu-bar button {
+  height: 100%;
+  padding: 0 12px;
+  font-family: inherit;
+  color: #FFF;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+.menu-bar button:hover {
+  color: #000;
+  background-color: #FF0; /* 經典高亮黃 */
+}
+
+/* 下拉選單樣式 (方正風格) */
+.dropdown {
+  position: relative;
+  display: inline-block;
+  height: 100%;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  min-width: 140px;
+  border: 1px solid #000; /* 實線邊框 */
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.5); /* 復古硬陰影 */
+  z-index: 101;
+}
+.dropdown-content button {
+  color: black;
+  padding: 8px 12px;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: white;
+  border-bottom: 1px solid #eee;
+}
+.dropdown-content button:hover {
+  background-color: #FF0;
+  color: #000;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+.dropdown:hover > button {
+  background-color: #999;
+  color: #000;
+}
+
+/* 主內容：桌面區域 */
+.main {
+  flex: 1;
+  display: flex;
+  position: relative;
+  background-color: #2a2a2a; /* 稍微深一點的灰色，讓畫布區分出來 */
+  overflow: auto; /* 允許桌面捲動 */
+  justify-content: center; /* 讓畫布預設置中 */
+  align-items: center;
+  padding: 40px;
+}
+
+/* 工具列 (懸浮在左側) */
+.toolbar {
+  position: fixed;
+  left: 10px;
+  top: 40px;
+  background-color: #999; /* 原始工具列顏色 */
+  display: flex;
+  flex-direction: column;
+  padding: 2px;
+  gap: 4px;
+  z-index: 90;
+  border: 1px solid #000; /* 實線邊框 */
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.5); /* 復古硬陰影 */
+}
+
+.tool {
+  width: 24px;
+  height: 24px;
+  font-size: 16px;
+  font-family: inherit;
+  color: #fff;
+  background-color: #000;
+  border: 2px solid #999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  /* 移除圓角 */
+  border-radius: 0; 
+}
+
+.tool:hover {
+  color: #000;
+  background-color: #FF0;
+  border-color: #FF0;
+}
+.tool.active {
+  border: 2px solid #FF0; /* 啟用時亮黃框 */
+}
+.tool.disabled {
+  color: #666;
+  background-color: #222;
+  cursor: not-allowed;
+  border-color: #444;
+}
+
+/* 筆刷設定 */
+.brush-settings {
+  display: grid;
+  gap: 4px;
+  padding-top: 4px;
+  border-top: 1px solid #666;
+  margin-top: 2px;
+}
+.brush-settings label {
+  width: 24px;
+  font-size: 14px;
+  color: #000;
+  background-color: #fff;
+  border: 2px solid #999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+.brush-settings label:hover {
+  background-color: #FF0;
+}
+.brush-settings input {
+  width: 20px;
+  height: 18px;
+  font-size: 16px;
+  font-family: inherit;
+  color: #fff;
+  background-color: #000;
+  border: none;
+  text-align: center;
+  padding: 0;
+}
+input[type="color"] {
+  padding: 0;
+  border: none;
+  height: 20px;
+  width: 20px;
+}
+
+/* 畫布本體 */
+.canvas {
+  background-color: #000;
+  display: grid;
+  user-select: none;
+  line-height: 1;
+  /* 硬邊框與硬陰影 */
+  border: 1px solid #666; 
+  box-shadow: 10px 10px 0px rgba(0,0,0,0.3); 
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* 選取區域樣式 (螞蟻線效果) */
+/* .cell.selected {
+  position: relative;
+}
+.cell.selected::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border: 1px dashed #fff;
+  background: rgba(255, 255, 255, 0.15);
+  pointer-events: none;
+  z-index: 10;
+} */
+/* 選取區域樣式 (優化：僅顯示外框，並增加陰影以適應深淺背景) */
+.cell.selected {
+  position: relative;
+}
+
+.cell.selected::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20; /* 確保浮在最上層 */
+  
+  /* 預設無邊框，由下方 class 控制 */
+  border: 0px dashed rgba(255, 255, 255, 0.5);
+  
+  /* 增加黑色硬陰影 (螞蟻線效果)，讓白線在淺色背景也能看見 */
+  filter: drop-shadow(1px 1px 0px #000) drop-shadow(-1px -1px 0px #000);
+}
+
+/* 邊界控制類別 */
+.cell.sel-t::after { border-top-width: 2px; }    /* 上邊框 */
+.cell.sel-b::after { border-bottom-width: 2px; } /* 下邊框 */
+.cell.sel-l::after { border-left-width: 2px; }   /* 左邊框 */
+.cell.sel-r::after { border-right-width: 2px; }  /* 右邊框 */
+
+/* 打字工具：閃爍游標（用 ::before，避免與 .selected::after 選框衝突） */
+.cell.typing-caret {
+  position: relative;
+}
+
+.cell.typing-caret::before {
+  content: "|";
+  position: absolute;
+  left: -3px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.35em;
+  text-align: center;
+  color: #cccccc;
+  font-size: 1em;
+  line-height: 1;
+  pointer-events: none;
+  z-index: 25;
+  /* opacity 由 ui.js render() 在 .canvas 上設 --typing-caret-opacity，全部 caret 共用同一相位 */
+  opacity: var(--typing-caret-opacity, 1);
+  transition: none;
+}
+
+/* 打字工具：打字選取底色（!important 蓋過 render 對 .cell 的 inline backgroundColor） */
+.cell.type-selected {
+  background-color: #ffffff33 !important;
+  background-image: none;
+}
+
+/* 遮罩 */
+.overlay, .popup-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7); /* 較深的遮罩 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9998;
+}
+.hidden { display: none; }
+
+/* 歡迎介面（三欄；略低於 dialog 以利之後彈窗疊上） */
+#welcome-overlay {
+  z-index: 9997;
+}
+
+.welcome-panel {
+  background: #eee;
+  border: 2px solid #fff;
+  outline: 2px solid #000;
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.5);
+  border-radius: 0;
+  width: min(720px, 92vw);
+  max-width: 100%;
+  aspect-ratio: 1.6 / 1;
+  max-height: 92vh;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  font-family: inherit;
+  z-index: 9998;
+  overflow: hidden;
+}
+
+.welcome-header {
+  background-color: #000;
+  color: #fff;
+  padding: 4px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.welcome-columns {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: stretch;
+  padding: 12px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.welcome-column {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 6px;
+  border-left: 1px solid #bbb;
+}
+
+.welcome-column:first-child {
+  border-left: none;
+  padding-left: 0;
+}
+
+.welcome-column--social {
+  flex: 0 0 170px;
+  max-width: 170px;
+  padding-right: 4px;
+  gap: 9px;
+}
+
+.welcome-column--files {
+  flex: 1 1 0;
+}
+
+.welcome-column--version {
+  flex: 1.45 1 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* 僅版本號與公告內文可捲動（標題列固定於欄頂） */
+.welcome-version-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.welcome-heading {
+  margin: 0;
+  font-size: 15px;
+  font-weight: bold;
+  border-bottom: 1px solid #999;
+  padding-bottom: 4px;
+  flex-shrink: 0;
+}
+
+.welcome-note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #222;
+}
+
+.welcome-version-line {
+  margin: 0 0 6px;
+  font-size: 10px;
+  line-height: 1.3;
+  color: #111;
+}
+
+.welcome-version-number {
+  font-size: 1.75em;
+  font-weight: bold;
+  letter-spacing: 0.02em;
+}
+
+.welcome-version-body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  flex-shrink: 0;
+}
+
+.welcome-subheading {
+  margin: 4px 0 0;
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+  border-bottom: 1px solid #aaa;
+  padding-bottom: 2px;
+}
+
+.welcome-recent {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.welcome-recent-empty-msg {
+  display: none;
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.35;
+  color: #555;
+}
+
+.welcome-recent--empty .welcome-recent-empty-msg {
+  display: block;
+}
+
+/* 社群：圖檔即按鈕本體（無外層容器），邊長約為先前 88px 之 1.5 倍 */
+.welcome-social-btn {
+  display: block;
+  width: 170px;
+  height: 170px;
+  padding: 0;
+  box-sizing: border-box;
+  border: 2px solid;
+  border-color: #fff #666 #666 #fff;
+  border-radius: 14px;
+  background-color: #ccc;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  cursor: pointer;
+  text-decoration: none;
+  flex-shrink: 0;
+  overflow: hidden;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.welcome-social-btn--steam {
+  background-image: url("../assets/images/SteamLogo.png");
+}
+
+.welcome-social-btn--discord {
+  background-image: url("../assets/images/DiscordLogo.png");
+}
+
+.welcome-social-btn:hover {
+  background-color: #ddd;
+}
+
+.welcome-social-btn:active {
+  border-color: #666 #fff #fff #666;
+  transform: translate(1px, 1px);
+}
+
+.welcome-btn-recent {
+  font-size: 12px;
+  padding: 3px 8px;
+  width: 100%;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.welcome-footer {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0px;
+  border-top: 1px solid #999;
+  flex-shrink: 0;
+}
+
+.welcome-btn,
+.welcome-link-btn {
+  background-color: #ccc;
+  border: 2px solid;
+  border-color: #fff #666 #666 #fff;
+  color: #000;
+  padding: 4px 12px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  text-decoration: none;
+  text-align: center;
+  box-sizing: border-box;
+  display: inline-block;
+  width: 100%;
+}
+
+.welcome-link-btn:hover {
+  background-color: #ddd;
+}
+
+.welcome-link-btn:active {
+  border-color: #666 #fff #fff #666;
+  transform: translate(1px, 1px);
+}
+
+.welcome-btn:hover {
+  background-color: #ddd;
+}
+
+.welcome-btn:active {
+  border-color: #666 #fff #fff #666;
+  transform: translate(1px, 1px);
+}
+
+.welcome-btn-primary {
+  width: auto;
+  min-width: 140px;
+}
+
+@media (max-width: 640px) {
+  .welcome-columns {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .welcome-column {
+    border-left: none;
+    padding-left: 0;
+    width: 100%;
+    max-width: none;
+    min-height: 0;
+  }
+  .welcome-column--social {
+    flex: 0 0 auto;
+    max-width: none;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+  }
+  .welcome-column--social .welcome-heading {
+    flex: 1 1 100%;
+  }
+  .welcome-column--version {
+    flex: 0 1 auto;
+  }
+  .welcome-version-scroll {
+    max-height: min(45vh, 260px);
+  }
+}
+
+/* 彈出視窗 (方正風格) */
+.dialog, .popup-window {
+  background: #eee; /* 經典灰底 */
+  padding: 16px;
+  border: 2px solid #fff; /* 立體感邊框亮部 */
+  outline: 2px solid #000; /* 立體感邊框暗部 */
+  min-width: 300px;
+  max-width: 400px;
+  z-index: 9999;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 8px 8px 0px rgba(0,0,0,0.5); /* 硬陰影 */
+  border-radius: 0; /* 確保無圓角 */
+  font-family: inherit;
+}
+
+.popup-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  background-color: #000;
+  color: #fff;
+  padding: 4px 32px 4px 8px; /* 標題反白區塊；右側留給 × */
+}
+
+.popup-close {
+  position: absolute;
+  top: 18px; /* 調整位置以配合 padding */
+  right: 20px;
+  font-size: 20px;
+  cursor: pointer;
+  color: #fff;
+  background: #f00;
+  width: 20px;
+  height: 20px;
+  line-height: 18px;
+  text-align: center;
+  border: 1px solid #fff;
+}
+.popup-close:hover {
+  background: #a00;
+}
+
+.popup-body {
+  margin-bottom: 16px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+/* 輸入框樣式 */
+.popup-input input, .popup-select select {
+  margin-left: 10px;
+  border: 1px solid #666;
+  padding: 2px;
+  background: #fff;
+  font-family: inherit;
+  border-radius: 0;
+}
+
+.popup-input, .popup-checkbox, .popup-select {
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.popup-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+  border-top: 1px solid #999;
+  padding-top: 10px;
+}
+
+/* 按鈕樣式 (復古按鈕) */
+.popup-footer button {
+  background-color: #ccc;
+  border: 2px solid;
+  border-color: #fff #666 #666 #fff; /* 3D按鈕效果 */
+  color: #000;
+  padding: 4px 12px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+}
+.popup-footer button:active {
+  border-color: #666 #fff #fff #666; /* 按下凹陷 */
+  transform: translate(1px, 1px);
+}
+.popup-footer button:hover {
+  background-color: #ddd;
+}
+
+/* 浮動視窗樣式 */
+.floating-window {
+  position: absolute;
+  background-color: #ddd;
+  border: 2px solid #fff;
+  outline: 2px solid #000;
+  box-shadow: 8px 8px 0px rgba(0,0,0,0.5);
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  z-index: 200;
+}
+.floating-window.hidden {
+  display: none;
+}
+
+.window-header {
+  background-color: #000;
+  color: #fff;
+  padding: 4px 8px;
+  cursor: move; /* 拖曳游標 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+}
+
+.win-close-btn {
+  background: red;
+  color: white;
+  border: 1px solid white;
+  width: 16px;
+  height: 16px;
+  line-height: 14px;
+  text-align: center;
+  font-size: 12px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.palette-body {
+  padding: 8px;
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin-bottom: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.palette-item {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #999;
+  background-color: #000; /* 預設底色 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 20px;
+  user-select: none;
+}
+.palette-item:hover {
+  outline: 2px solid #FF0;
+  z-index: 1;
+}
+
+.palette-controls button {
+  width: 100%;
+  padding: 4px;
+  background-color: #ccc;
+  border: 2px solid;
+  border-color: #fff #666 #666 #fff;
+  cursor: pointer;
+  font-family: inherit;
+}
+.palette-controls button:active {
+  border-color: #666 #fff #fff #666;
+}
+
+/* 打字工具：隱藏欄位對齊畫布格，供系統 IME 候選窗錨點 */
+.type-ime-hook {
+  position: fixed;
+  z-index: 50000;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  overflow: hidden;
+  resize: none;
+  font: inherit;
+  line-height: 1;
+  pointer-events: none; /* 與 syncTypeImeHookPointerEvents 一致：不擋格子上拖曳選取 */
+}

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>文字小畫家</title>
+  <link rel="stylesheet" href="web/css/style.css" />
+  <!-- 線上字體備援 -->
+  <link href="https://fonts.googleapis.com/css2?family=Zpix&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <!-- 系統功能列 -->
+    <div class="menu-bar"></div>
+
+    <!-- 主畫面：工具列 + 畫布 -->
+    <div class="main">
+      <!-- 左側工具列 -->
+      <div class="toolbar" id="toolbar"></div>
+      
+      <!-- 右側畫布顯示區 -->
+      <div id="canvas" class="canvas"></div>
+    </div>
+  </div>
+
+  <div id="palette-window" class="floating-window hidden" style="top: 100px; right: 20px;">
+      <div class="window-header" id="palette-header">
+        <span>調色盤</span>
+        <button class="win-close-btn" onclick="TogglePalette()">×</button>
+      </div>
+      <div class="palette-body">
+        <div class="palette-grid" id="palette-grid">
+          <!-- JS 動態生成 -->
+        </div>
+        <div class="palette-controls">
+          <button id="btn-add-palette" title="將當前筆刷加入調色盤">+ 加入目前筆刷</button>
+        </div>
+      </div>
+    </div>
+
+  <!-- 打字工具 IME 錨點（由 JS 對齊畫布格） -->
+  <textarea id="type-ime-hook" class="type-ime-hook" tabindex="0" rows="1" inputmode="text"
+    autocomplete="off" autocorrect="off" spellcheck="false" aria-label="打字輸入"></textarea>
+
+  <!-- 歡迎介面（開啟時三欄；與 dialog 分離） -->
+  <div id="welcome-overlay" class="overlay welcome-overlay hidden" role="presentation">
+    <div class="welcome-panel" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+      <div class="welcome-header">
+        <span id="welcome-title" data-i18n="welcome.title">歡迎使用文字小畫家</span>
+        <button type="button" class="win-close-btn" id="welcome-close" aria-label="關閉">×</button>
+      </div>
+      <div class="welcome-columns">
+        <section class="welcome-column welcome-column--social" aria-label="社群連結">
+          <h3 class="welcome-heading" data-i18n="welcome.sectionSocial">社群</h3>
+          <a class="welcome-social-btn welcome-social-btn--steam" href="https://store.steampowered.com/app/3114370/_/" target="_blank" rel="noopener noreferrer" data-i18n-title="welcome.steamTitle" data-i18n-aria="welcome.steamTitle" title="Steam 商店"></a>
+          <a class="welcome-social-btn welcome-social-btn--discord" href="https://discord.com/invite/V64wmUcuUP" target="_blank" rel="noopener noreferrer" data-i18n-title="welcome.discordTitle" data-i18n-aria="welcome.discordTitle" title="Discord"></a>
+        </section>
+        <section class="welcome-column welcome-column--files">
+          <h3 class="welcome-heading" data-i18n="welcome.sectionFiles">檔案</h3>
+          <button type="button" class="welcome-btn" id="welcome-btn-new" data-i18n="welcome.btnNew">開啟新檔</button>
+          <button type="button" class="welcome-btn" id="welcome-btn-open" data-i18n="welcome.btnOpen">開啟舊檔</button>
+          <div class="welcome-recent" id="welcome-recent-block">
+            <h4 class="welcome-subheading" data-i18n="welcome.recentHeading">最近開啟</h4>
+            <div class="welcome-recent-list" id="welcome-recent-list" role="list"></div>
+            <p class="welcome-recent-empty-msg" data-i18n="welcome.recentEmpty">尚無紀錄；成功「開啟舊檔」後會顯示於此。</p>
+          </div>
+        </section>
+        <section class="welcome-column welcome-column--version">
+          <h3 class="welcome-heading" data-i18n="welcome.sectionVersion">版本消息</h3>
+          <div class="welcome-version-scroll">
+            <p class="welcome-version-line" id="welcome-version-line"></p>
+            <div class="welcome-version-body" id="welcome-version-body"></div>
+          </div>
+        </section>
+      </div>
+      <div class="welcome-footer">
+        <button type="button" class="welcome-btn welcome-btn-primary" id="welcome-btn-start" data-i18n="welcome.btnStart">開始使用</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 彈跳視窗遮罩 -->
+  <div id="dialog-overlay" class="overlay hidden">
+    <div id="dialog" class="dialog"></div>
+  </div>
+
+  <!-- 引入外部庫 (若要離線，請下載此檔案改為本機路徑) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  
+  <!-- 引入 JS（順序：globals → storage → i18n → utils → worldExport → tools → ui → main） -->
+  <script src="web/js/globals.js"></script>
+  <script src="web/js/storage.js"></script>
+  <script src="web/js/i18n.js"></script>
+  <script src="web/js/utils.js"></script>
+  <script src="web/js/worldExport.js"></script>
+  <script src="web/js/tools.js"></script>
+  <script src="web/js/ui.js"></script>
+  <script src="web/js/main.js"></script>
+</body>
+</html>
