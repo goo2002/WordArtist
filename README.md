@@ -10,7 +10,8 @@
 
 | 版本 | 發布日期 | 更新內容 | 下載連結 |
 |:---|:---:|:---|:---|
-| **v1.0.0** | 2025-06-07 | 初始版本發布 | [v1.0.0.zip](https://github.com/goo2002/WordArtist/releases/download/v1.0.0/WordArtist-v1.0.0.zip) |
+| **v1.0.0** | 2025-04-19 | 初始版本發布 | [v1.0.0.zip](https://github.com/goo2002/WordArtist/releases/download/v1.0.0/文字小畫家1.0.0.zip) |
+| **v1.0.1** | 2025-06-07 | 打字功能優化、資料夾結構整理、介面整理、Beta測試功能 | [v1.0.1.zip](https://github.com/goo2002/WordArtist/releases/download/v1.0.1/文字小畫家1.0.1.zip) |
 
 ---
 
