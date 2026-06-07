@@ -10,7 +10,7 @@
 
 | 版本號 | 發布日期 | 更新內容 | 下載連結 |
 |:---|:---:|:---|:---|
-| **v1.0.0** | 2025-06-07 | 初始版本發布、字體藝術化處理、介面優化 | [📦 下載 v1.0.0.zip](https://github.com/goo2002/WordArtist/releases/download/v1.0.0/WordArtist-v1.0.0.zip) |
+| **v1.0.0** | 2025-06-07 | 初始版本發布 | [📦 下載 v1.0.0.zip](https://github.com/goo2002/WordArtist/releases/download/v1.0.0/WordArtist-v1.0.0.zip) |
 
 ---
 
